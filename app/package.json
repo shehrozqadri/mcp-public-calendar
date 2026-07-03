@@ -1,0 +1,22 @@
+{
+  "name": "mongodb-certification-portal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MongoDB Certification Program (MCP) Portal - deployable on Vercel, Cloudflare Pages, or any Node host",
+  "packageManager": "yarn@4.9.1",
+  "scripts": {
+    "build": "cd frontend && yarn install && yarn build",
+    "dev": "wrangler pages dev frontend/build --compatibility-flags=nodejs_compat",
+    "dev:frontend": "cd frontend && yarn start",
+    "deploy": "wrangler pages deploy frontend/build",
+    "deploy:vercel": "vercel --prod"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "mongodb": "^6.9.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.80.0"
+  }
+}

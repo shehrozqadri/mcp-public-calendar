@@ -1,0 +1,5 @@
+backend/
+.emergent/
+memory/
+test_reports/
+content/

@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "courses": [
+    {
+      "id": "associate-developer-data-modeler",
+      "title": "Associate Developer / Data Modeler",
+      "short_title": "Developer / Data Modeler",
+      "track_filter": "Associate Developer / Data Modeler",
+      "duration": "2 days",
+      "format": "In-person / Virtual",
+      "summary": "Master the fundamentals of MongoDB development and data modeling. Learn to design efficient schemas, write performant queries, and build scalable applications.",
+      "slides": [
+        {
+          "heading": "Course Overview",
+          "body": "This comprehensive 2-day training provides hands-on experience with MongoDB development practices and data modeling principles. You'll learn how to design flexible schemas that align with application access patterns and leverage MongoDB's document model effectively."
+        },
+        {
+          "heading": "Who Should Attend",
+          "bullets": [
+            "Backend developers transitioning to MongoDB",
+            "Data architects designing new applications",
+            "Engineers responsible for database schema design",
+            "Technical leads evaluating MongoDB for projects"
+          ]
+        },
+        {
+          "heading": "Key Topics",
+          "bullets": [
+            "Document model fundamentals and BSON types",
+            "Schema design patterns and anti-patterns",
+            "Query optimization and index strategies",
+            "Aggregation framework for data analysis",
+            "Transactions and data consistency",
+            "Performance tuning and profiling"
+          ]
+        },
+        {
+          "heading": "Learning Outcomes",
+          "bullets": [
+            "Design schemas aligned with application requirements",
+            "Write efficient queries using MongoDB Query Language",
+            "Implement proper indexing strategies",
+            "Understand when to embed vs. reference documents",
+            "Build aggregation pipelines for complex data transformations"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "associate-atlas-administrator",
+      "title": "Associate Atlas Administrator",
+      "short_title": "Atlas Administrator",
+      "track_filter": "Associate Atlas Administrator",
+      "duration": "2 days",
+      "format": "In-person / Virtual",
+      "summary": "Become proficient in managing MongoDB Atlas deployments. Learn cluster configuration, security best practices, monitoring, and operational workflows for cloud-based MongoDB.",
+      "slides": [
+        {
+          "heading": "Course Overview",
+          "body": "This intensive 2-day course covers everything needed to successfully deploy and manage MongoDB Atlas clusters in production. From initial setup to advanced operational tasks, you'll gain hands-on experience with Atlas's full feature set."
+        },
+        {
+          "heading": "Who Should Attend",
+          "bullets": [
+            "DevOps engineers managing database infrastructure",
+            "System administrators new to MongoDB Atlas",
+            "Platform engineers responsible for data services",
+            "Cloud architects designing MongoDB deployments"
+          ]
+        },
+        {
+          "heading": "Key Topics",
+          "bullets": [
+            "Atlas cluster deployment and configuration",
+            "Security: authentication, authorization, and encryption",
+            "Backup strategies and point-in-time recovery",
+            "Performance monitoring and alerting",
+            "Scaling strategies: vertical and horizontal",
+            "Multi-region deployments and global clusters"
+          ]
+        },
+        {
+          "heading": "Learning Outcomes",
+          "bullets": [
+            "Deploy and configure Atlas clusters for various workloads",
+            "Implement comprehensive security controls",
+            "Monitor cluster health and performance metrics",
+            "Execute backup and disaster recovery procedures",
+            "Scale clusters to meet changing demands"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "associate-database-administrator",
+      "title": "Associate Database Administrator",
+      "short_title": "Database Administrator",
+      "track_filter": "Associate Database Administrator",
+      "duration": "2 days",
+      "format": "In-person / Virtual",
+      "summary": "Deep dive into MongoDB administration for self-managed deployments. Cover installation, replica sets, sharding, backup/recovery, and production operations.",
+      "slides": [
+        {
+          "heading": "Course Overview",
+          "body": "This advanced 2-day training focuses on administering self-managed MongoDB deployments. You'll learn to configure replica sets, implement sharding, and manage all aspects of production MongoDB infrastructure."
+        },
+        {
+          "heading": "Who Should Attend",
+          "bullets": [
+            "Database administrators managing on-premise MongoDB",
+            "Infrastructure engineers supporting MongoDB workloads",
+            "SREs responsible for database reliability",
+            "Technical operators transitioning from other databases"
+          ]
+        },
+        {
+          "heading": "Key Topics",
+          "bullets": [
+            "MongoDB installation and configuration",
+            "Replica set architecture and maintenance",
+            "Sharding for horizontal scalability",
+            "Backup strategies: mongodump, snapshots, and continuous backup",
+            "Performance monitoring and optimization",
+            "Security hardening and auditing",
+            "Upgrading and migration procedures"
+          ]
+        },
+        {
+          "heading": "Learning Outcomes",
+          "bullets": [
+            "Deploy and manage replica sets in production",
+            "Implement and maintain sharded clusters",
+            "Execute backup and restore operations",
+            "Diagnose and resolve performance issues",
+            "Apply security best practices for self-managed deployments"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-masterclass",
+      "title": "AI Masterclass",
+      "short_title": "AI Masterclass",
+      "track_filter": "AI Masterclass",
+      "duration": "2 days",
+      "format": "In-person / Virtual",
+      "summary": "Explore MongoDB's AI capabilities including vector search, semantic search, and building AI-powered applications. Learn to integrate MongoDB with modern AI/ML workflows.",
+      "slides": [
+        {
+          "heading": "Course Overview",
+          "body": "This cutting-edge 2-day masterclass explores how MongoDB powers modern AI applications. Learn to implement vector search, build RAG (Retrieval-Augmented Generation) systems, and integrate MongoDB with AI/ML frameworks."
+        },
+        {
+          "heading": "Who Should Attend",
+          "bullets": [
+            "AI/ML engineers building intelligent applications",
+            "Data scientists working with vector embeddings",
+            "Full-stack developers integrating AI features",
+            "Product managers exploring AI use cases"
+          ]
+        },
+        {
+          "heading": "Key Topics",
+          "bullets": [
+            "Vector search fundamentals and implementation",
+            "Storing and querying embeddings at scale",
+            "Building RAG applications with MongoDB",
+            "Semantic search and similarity matching",
+            "Integrating with OpenAI, LangChain, and other frameworks",
+            "Performance optimization for AI workloads"
+          ]
+        },
+        {
+          "heading": "Learning Outcomes",
+          "bullets": [
+            "Implement vector search for semantic queries",
+            "Build RAG systems using MongoDB as knowledge base",
+            "Design schemas optimized for AI workloads",
+            "Integrate MongoDB with popular AI frameworks",
+            "Deploy production-ready AI-powered applications"
+          ]
+        }
+      ]
+    }
+  ]
+}

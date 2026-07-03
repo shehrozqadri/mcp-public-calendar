@@ -1,0 +1,2 @@
+# SPA routing - Pages Functions handle /api/*, everything else falls back to index.html
+/*    /index.html   200

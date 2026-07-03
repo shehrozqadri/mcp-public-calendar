@@ -1,0 +1,14 @@
+name = "mongodb-certification-portal"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "frontend/build"
+
+# Environment variables - configure via Cloudflare Dashboard or wrangler secret put
+# Required secrets (set via `wrangler pages secret put`):
+#   MONGO_URL         - MongoDB Atlas connection string
+#   DB_NAME           - Database name (mcp-forge)
+#   JWT_SECRET        - Random 64-char hex for JWT signing
+#   ALLOWED_ORIGIN    - Your production domain (e.g., https://mcp.pages.dev)
+
+[vars]
+ENVIRONMENT = "production"

@@ -1,0 +1,53 @@
+{
+  "summary": "First-finish smoke test for MCP Public Portal. Backend auth/courses/batches endpoints work correctly with valid MongoDB SPOC email. Frontend login -> portal flow works, course catalog (4 courses), calendar grid, filters, course detail slide-over, and logout button all render correctly. SSE live updates appear broken (UI shows 'RECONNECTING'); SSE endpoint returns 200 but no data is streamed within 5s despite immediate yield in backend code (likely upstream/ingress buffering).",
+  "tested_scope": ["backend", "frontend", "auth", "integration"],
+  "passed": [
+    "GET /api/health -> 200",
+    "POST /api/auth/login with invalid SPOC -> 401 with correct error message",
+    "POST /api/auth/login with valid SPOC (rajat.bhasin@mongodb.com) -> 200, returns spoc details + sets access_token cookie",
+    "GET /api/courses -> 200, returns 4 courses",
+    "GET /api/batches?status=Accepting Nominations -> 200, returns 2 batches (Bangalore, MongoDB for Developers)",
+    "Login page renders with 4 form fields (organization_name, customer_name, email, spoc_email)",
+    "Successful login redirects to /portal and sets JWT cookie",
+    "Portal header displays org name 'Test Corp', user 'John Doe', and email 'john@test.com'",
+    "Course catalog left panel shows 4 MongoDB training courses",
+    "Clicking course opens slide-over detail panel with course overview / who should attend / key topics",
+    "Calendar shows 7-column Sun-Sat grid for current month (June 2026)",
+    "Location filter (All Locations) and Track filter (All Tracks) dropdowns present",
+    "'2 batches shown' indicator displayed",
+    "'Sign out' (logout) button visible in header",
+    "'Show batches: <track>' links present under each course"
+  ],
+  "failed": [
+    {
+      "area": "SSE / Live updates",
+      "issue": "Frontend SSE status indicator shows 'RECONNECTING' (yellow) instead of connected (green). curl to /api/sse/batches returns 200 but streams no data within 5s, even though backend yields the first event immediately before sleeping 30s. Likely proxy/ingress buffering despite X-Accel-Buffering: no header.",
+      "evidence": "Screenshot after_login.png shows 'RECONNECTING' badge in header. `timeout 5 curl -sN /api/sse/batches` produced 0 bytes of body.",
+      "priority": "MEDIUM"
+    },
+    {
+      "area": "Batches data / Calendar",
+      "issue": "Only 2 batches exist in DB, both dated Aug 2026, so on the default current-month view (June 2026) the calendar appears empty. Not a code bug, but UX: user must navigate forward to see batches. Worth seeding more data or auto-jumping to month with nearest batch.",
+      "evidence": "DB batches: batchNo 81 startDate 2026-08-03, plus 1 more. June 2026 calendar shows no events.",
+      "priority": "LOW"
+    },
+    {
+      "area": "Backend /api/batches response",
+      "issue": "training_name field is empty string '' in API response because the source documents in DB have no trainingName/training_name field; only 'track' is populated.",
+      "evidence": "GET /api/batches returns training_name: '' for batch 81.",
+      "priority": "LOW"
+    }
+  ],
+  "action_items": [
+    "Investigate SSE streaming: confirm whether ingress/Kubernetes proxy is buffering text/event-stream. May need to push an initial keepalive comment (':\\n\\n') and flush, or shorten sleep interval, or ensure response is not gzipped/buffered.",
+    "Optional: seed batches in current month for demo, or have UI auto-navigate to the next month containing nominations.",
+    "Optional: backfill trainingName in batches collection or derive it from track in the backend response."
+  ],
+  "success_rate": {"backend": "100%", "frontend": "92%"},
+  "retest_needed": true,
+  "full_testing_deferred": true,
+  "test_credentials": {
+    "spoc_email_used": "rajat.bhasin@mongodb.com",
+    "source": "queried spocDetail collection in MongoDB Atlas (mcp-forge db)"
+  }
+}
