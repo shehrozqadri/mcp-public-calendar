@@ -1,7 +1,7 @@
 // GET /api/batches - returns training batches with optional filters
 // Query params: status, location, track
 import { getDb } from "../utils/mongo.js";
-import { getUserFromRequest } from "../utils/jwt.js";
+import { getUserFromRequest } from "../../server/session.js";
 import { json, error } from "../utils/response.js";
 
 function toIso(value) {

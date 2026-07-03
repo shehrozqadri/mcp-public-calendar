@@ -1,7 +1,7 @@
 // Platform-agnostic environment resolution.
 // Works with Cloudflare bindings, Vercel/Node process.env, and local .env files.
 
-const REQUIRED = ["MONGO_URL", "JWT_SECRET"];
+const REQUIRED = ["MONGO_URL"];
 
 function pick(source, key) {
   const value = source?.[key];
@@ -19,7 +19,6 @@ export function resolveEnv(source = {}) {
   return {
     MONGO_URL: pick(raw, "MONGO_URL"),
     DB_NAME: pick(raw, "DB_NAME") || "mcp-forge",
-    JWT_SECRET: pick(raw, "JWT_SECRET"),
     ALLOWED_ORIGIN: pick(raw, "ALLOWED_ORIGIN"),
     NODE_ENV: pick(raw, "NODE_ENV") || pick(raw, "ENVIRONMENT") || "production",
   };
@@ -43,7 +42,6 @@ export function getConfigStatus(env) {
     missing,
     configured: {
       mongo: Boolean(resolved.MONGO_URL),
-      jwt: Boolean(resolved.JWT_SECRET),
       db: resolved.DB_NAME,
       origin: Boolean(resolved.ALLOWED_ORIGIN),
     },

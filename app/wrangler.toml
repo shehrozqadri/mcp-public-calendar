@@ -7,7 +7,6 @@ pages_build_output_dir = "frontend/build"
 # Required secrets (set via `wrangler pages secret put`):
 #   MONGO_URL         - MongoDB Atlas connection string
 #   DB_NAME           - Database name (mcp-forge)
-#   JWT_SECRET        - Random 64-char hex for JWT signing
 #   ALLOWED_ORIGIN    - Your production domain (e.g., https://mcp.pages.dev)
 
 [vars]

@@ -12,7 +12,7 @@ Browser  →  Static SPA (frontend/build)  →  /api/* handlers (server/)
 
 - **Frontend**: React app in `frontend/` (build output: `frontend/build`)
 - **API**: Shared handlers in `functions/api/` with platform adapters in `api/` (Vercel) or `functions/` (Cloudflare)
-- **Shared logic**: `server/` (env, MongoDB, JWT, responses)
+- **Shared logic**: `server/` (env, MongoDB, session, responses)
 
 ## Required environment variables
 
@@ -20,7 +20,6 @@ Browser  →  Static SPA (frontend/build)  →  /api/* handlers (server/)
 |----------|-------------|
 | `MONGO_URL` | MongoDB Atlas SRV connection string |
 | `DB_NAME` | Database name (default: `mcp-forge`) |
-| `JWT_SECRET` | Random secret for JWT signing (`openssl rand -hex 32`) |
 | `ALLOWED_ORIGIN` | Public app URL for CORS (optional — auto-detected from request host if unset) |
 
 Copy `.env.example` to `.env` for local development.
@@ -51,7 +50,6 @@ yarn dev
 cd app
 npx vercel env add MONGO_URL production
 npx vercel env add DB_NAME production
-npx vercel env add JWT_SECRET production
 npx vercel env add ALLOWED_ORIGIN production
 npx vercel --prod
 ```
@@ -66,7 +64,6 @@ See `CLOUDFLARE_DEPLOYMENT.md` for Cloudflare-specific steps. Set secrets via:
 
 ```bash
 wrangler pages secret put MONGO_URL
-wrangler pages secret put JWT_SECRET
 ```
 
 ## Frontend API URL
@@ -77,6 +74,7 @@ For split deployments, set `REACT_APP_BACKEND_URL` at build time to your API ori
 
 ## Security notes
 
-- JWT stored in `HttpOnly` + `Secure` + `SameSite=Strict` cookies
+- User profiles stored in MongoDB `user_profiles` collection on signup
+- Session via `user_id` HttpOnly cookie (8-hour expiry)
 - Rate limiting on `/api/auth/login`
 - MongoDB Atlas: allow `0.0.0.0/0` for serverless hosts with shared egress IPs

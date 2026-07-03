@@ -3,16 +3,14 @@ load_dotenv()
 
 from fastapi import FastAPI, HTTPException, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
-from datetime import datetime, timezone, timedelta
+from pymongo import ReturnDocument
+from datetime import datetime, timezone
 from collections import defaultdict
 import os
-import jwt
-import bcrypt
 import json
 import asyncio
 import time
@@ -21,14 +19,11 @@ from typing import Optional, List
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 MONGO_URL = os.environ.get("MONGO_URL")
-DB_NAME = os.environ.get("DB_NAME")
-JWT_SECRET = os.environ.get("JWT_SECRET")
-JWT_ALGORITHM = "HS256"
+DB_NAME = os.environ.get("DB_NAME", "mcp-forge")
 
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
 
-# In-memory rate limiter (per-process, best-effort)
 _rate_buckets = defaultdict(list)
 
 def _rate_limit(key: str, limit: int = 10, window_seconds: int = 60) -> bool:
@@ -68,44 +63,32 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
-def hash_password(password: str) -> str:
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
-    return hashed.decode("utf-8")
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
-
-def create_access_token(user_id: str, email: str, org_name: str, customer_name: str) -> str:
-    payload = {
-        "sub": user_id,
-        "email": email,
-        "org": org_name,
-        "name": customer_name,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=8),
-        "type": "access"
+def _profile_response(profile: dict) -> dict:
+    spoc = profile.get("spoc", {})
+    return {
+        "organization_name": profile.get("organization_name"),
+        "customer_name": profile.get("customer_name"),
+        "email": profile.get("email"),
+        "spoc": {
+            "name": spoc.get("emp_name"),
+            "email": spoc.get("emp_email"),
+            "role": spoc.get("emp_role"),
+        },
     }
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 async def get_current_user(request: Request) -> dict:
-    token = request.cookies.get("access_token")
-    if not token:
-        auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
-            token = auth_header[7:]
-    if not token:
+    user_id = request.cookies.get("user_id")
+    if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        if payload.get("type") != "access":
-            raise HTTPException(status_code=401, detail="Invalid token type")
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        profile = await db.user_profiles.find_one({"_id": ObjectId(user_id)})
+    except Exception:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not profile:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return profile
 
-class LoginRequest(BaseModel):
+class SignupRequest(BaseModel):
     organization_name: str
     customer_name: str
     email: EmailStr
@@ -127,94 +110,95 @@ class BatchResponse(BaseModel):
     status: str
     nominations_closed: bool
 
-@app.post("/api/auth/login")
-async def login(request: LoginRequest, response: Response, http_request: Request):
-    # Rate limit login attempts by IP: 10/minute
+async def _signup(request: SignupRequest, response: Response, http_request: Request):
     ip = _client_ip(http_request)
-    if not _rate_limit(f"login:{ip}", limit=10, window_seconds=60):
+    if not _rate_limit(f"signup:{ip}", limit=10, window_seconds=60):
         raise HTTPException(status_code=429, detail="Too many attempts. Please try again shortly.")
 
     org_name = request.organization_name.strip()
     customer_name = request.customer_name.strip()
     email = request.email.lower().strip()
     spoc_email = request.spoc_email.lower().strip()
-    
+
     if not org_name or len(org_name) > 300:
         raise HTTPException(status_code=400, detail="Invalid organization name")
     if not customer_name or len(customer_name) > 200:
         raise HTTPException(status_code=400, detail="Invalid customer name")
-    
+
     spoc = await db.spocDetail.find_one({
         "$or": [
             {"emp_email": spoc_email},
-            {"empEmail": spoc_email}
+            {"empEmail": spoc_email},
         ]
     })
-    
+
     if not spoc:
-        raise HTTPException(status_code=401, detail="MongoDB SPOC email is not registered. Please contact your MongoDB representative.")
-    
+        raise HTTPException(
+            status_code=401,
+            detail="MongoDB SPOC email is not registered. Please contact your MongoDB representative.",
+        )
+
     spoc_id = str(spoc.get("_id", spoc.get("ID", spoc.get("id", "unknown"))))
     spoc_name = spoc.get("emp_name", spoc.get("empName", "Unknown"))
     spoc_role = spoc.get("emp_role", spoc.get("empRole", "Unknown"))
-    
-    try:
-        await db.customer_logins.insert_one({
-            "organization_name": org_name,
-            "customer_name": customer_name,
-            "email": email,
-            "spoc": {
-                "spoc_id": spoc_id,
-                "emp_name": spoc_name,
-                "emp_email": spoc_email,
-                "emp_role": spoc_role
+    now = datetime.now(timezone.utc)
+
+    profile = await db.user_profiles.find_one_and_update(
+        {"email": email},
+        {
+            "$set": {
+                "organization_name": org_name,
+                "customer_name": customer_name,
+                "email": email,
+                "spoc": {
+                    "spoc_id": spoc_id,
+                    "emp_name": spoc_name,
+                    "emp_email": spoc_email,
+                    "emp_role": spoc_role,
+                },
+                "updated_at": now,
+                "last_login_at": now,
+                "last_ip": ip,
             },
-            "logged_in_at": datetime.now(timezone.utc),
-            "ip": ip,
-        })
-    except Exception as e:
-        print(f"Warning: Failed to log customer login: {e}")
-    
-    access_token = create_access_token(spoc_id, email, org_name, customer_name)
-    
-    # Secure cookie: HttpOnly + Secure + SameSite (Lax needed for cross-site login redirect flows)
+            "$setOnInsert": {"created_at": now},
+        },
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+
     is_https = http_request.url.scheme == "https" or http_request.headers.get("X-Forwarded-Proto") == "https"
     response.set_cookie(
-        key="access_token",
-        value=access_token,
+        key="user_id",
+        value=str(profile["_id"]),
         httponly=True,
         secure=is_https,
         samesite="lax",
         max_age=28800,
-        path="/"
+        path="/",
     )
-    
-    return {
-        "organization_name": org_name,
-        "customer_name": customer_name,
-        "email": email,
-        "spoc": {
-            "name": spoc_name,
-            "email": spoc_email,
-            "role": spoc_role
-        }
-    }
+
+    return _profile_response(profile)
+
+@app.post("/api/auth/signup")
+async def signup(request: SignupRequest, response: Response, http_request: Request):
+    return await _signup(request, response, http_request)
+
+@app.post("/api/auth/login")
+async def login(request: SignupRequest, response: Response, http_request: Request):
+    return await _signup(request, response, http_request)
 
 @app.post("/api/auth/logout")
 async def logout(response: Response):
+    response.delete_cookie(key="user_id", path="/")
     response.delete_cookie(key="access_token", path="/")
     return {"message": "Logged out successfully"}
 
 @app.get("/api/auth/me")
 async def get_me(user: dict = Depends(get_current_user)):
-    return {
-        "organization_name": user.get("org"),
-        "customer_name": user.get("name"),
-        "email": user.get("email")
-    }
+    return _profile_response(user)
 
 @app.get("/api/courses")
-async def get_courses():
+async def get_courses(user: dict = Depends(get_current_user)):
     try:
         with open("/app/content/courses.json", "r") as f:
             data = json.load(f)
@@ -226,7 +210,8 @@ async def get_courses():
 async def get_batches(
     status: Optional[str] = None,
     location: Optional[str] = None,
-    track: Optional[str] = None
+    track: Optional[str] = None,
+    user: dict = Depends(get_current_user),
 ):
     query = {}
     if status:
@@ -238,7 +223,7 @@ async def get_batches(
             query["location"] = location
     if track and track != "all":
         query["track"] = track
-    
+
     batches = []
     async for batch in db.batches.find(query):
         available_seats = max(0, batch.get("maxCapacity", batch.get("max_capacity", 0)) - batch.get("enrolledCount", batch.get("enrolled_count", 0)))
@@ -258,33 +243,33 @@ async def get_batches(
             "status": batch.get("status", ""),
             "nominations_closed": batch.get("nominationsClosed", batch.get("nominations_closed", False))
         })
-    
+
     return batches
 
 @app.get("/api/sse/batches")
-async def sse_batches(request: Request):
+async def sse_batches(request: Request, user: dict = Depends(get_current_user)):
     async def event_generator():
         try:
             yield ": keepalive\n\n"
-            
-            batches = await get_batches(status="Accepting Nominations")
+
+            batches = await get_batches(status="Accepting Nominations", user=user)
             data = json.dumps([batch if isinstance(batch, dict) else batch.dict() for batch in batches])
             yield f"data: {data}\n\n"
-            
+
             while True:
                 if await request.is_disconnected():
                     break
-                
+
                 await asyncio.sleep(30)
-                
-                batches = await get_batches(status="Accepting Nominations")
+
+                batches = await get_batches(status="Accepting Nominations", user=user)
                 data = json.dumps([batch if isinstance(batch, dict) else batch.dict() for batch in batches])
                 yield f"data: {data}\n\n"
         except asyncio.CancelledError:
             pass
         except Exception as e:
             print(f"SSE error: {e}")
-    
+
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
@@ -298,7 +283,14 @@ async def sse_batches(request: Request):
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
+    missing = []
+    if not MONGO_URL:
+        missing.append("MONGO_URL")
+    return {
+        "status": "ok" if not missing else "degraded",
+        "missing": missing,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
 
 if __name__ == "__main__":
     import uvicorn

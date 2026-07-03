@@ -83,6 +83,8 @@ android-sdk/node_modules/@cloudflare/workerd-linux-arm64/bin/workerd
 node_modules/@cloudflare/workerd-linux-arm64/bin/workerd
 .env
 .env.*
+.env.vercel
+.env.vercel.*
 !.env.example
 *.env
 credentials.json

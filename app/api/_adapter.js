@@ -63,7 +63,6 @@ function getRuntimeEnv() {
   return resolveEnv({
     MONGO_URL: process.env.MONGO_URL,
     DB_NAME: process.env.DB_NAME,
-    JWT_SECRET: process.env.JWT_SECRET,
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
     NODE_ENV: process.env.NODE_ENV,
     VERCEL_ENV: process.env.VERCEL_ENV,

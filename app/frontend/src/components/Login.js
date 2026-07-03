@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || 'Login failed');
+        throw new Error(data.detail || 'Signup failed');
       }
 
       onLogin(data);
@@ -64,7 +64,7 @@ const Login = ({ onLogin }) => {
             MCP
           </p>
           <p className="text-center text-slate-400 mb-8">
-            Sign in to view training courses and live seat availability
+            Sign up to view training courses and live seat availability
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -151,7 +151,7 @@ const Login = ({ onLogin }) => {
               data-testid="login-submit-button"
               className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-medium px-6 py-3 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Signing up...' : 'Sign up'}
             </button>
           </form>
 

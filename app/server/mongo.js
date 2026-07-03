@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import { resolveEnv } from "./env.js";
+import { normalizeMongoUrl } from "./mongoUrl.js";
 
 let cachedClient = null;
 let cachedPromise = null;
@@ -11,7 +12,9 @@ export async function getMongoClient(rawEnv) {
   if (!cachedPromise) {
     if (!env.MONGO_URL) throw new Error("MONGO_URL is not configured");
 
-    cachedPromise = MongoClient.connect(env.MONGO_URL, {
+    const uri = normalizeMongoUrl(env.MONGO_URL);
+
+    cachedPromise = MongoClient.connect(uri, {
       serverSelectionTimeoutMS: 8000,
       connectTimeoutMS: 8000,
       maxPoolSize: 3,
