@@ -1,138 +1,154 @@
 {
-  "version": 1,
+  "version": 2,
   "courses": [
     {
-      "id": "associate-developer-data-modeler",
-      "title": "Associate Developer / Data Modeler",
-      "short_title": "Developer / Data Modeler",
-      "track_filter": "Associate Developer / Data Modeler",
+      "id": "mongodb-essentials",
+      "title": "MongoDB Essentials",
+      "short_title": "MongoDB Essentials",
+      "track_filter": "MongoDB Essentials",
       "duration": "2 days",
       "format": "In-person / Virtual",
-      "summary": "Master the fundamentals of MongoDB development and data modeling. Learn to design efficient schemas, write performant queries, and build scalable applications.",
+      "level": "Intermediate",
+      "audience": "Developers, Architects, Database Admins, DevOps",
+      "prerequisites": "None",
+      "summary": "This comprehensive training track guides participants from the core fundamentals of MongoDB to advanced application development techniques. Designed to bridge the gap between foundational knowledge and production-level optimization, this session covers everything from the document model and basic CRUD operations to complex aggregation pipelines, data modeling, and full-text search.",
       "slides": [
         {
-          "heading": "Course Overview",
-          "body": "This comprehensive 2-day training provides hands-on experience with MongoDB development practices and data modeling principles. You'll learn how to design flexible schemas that align with application access patterns and leverage MongoDB's document model effectively."
+          "heading": "Program Overview",
+          "body": "By the end of this training, participants will have the practical skills necessary to design, build, and optimize high-performance applications using MongoDB."
         },
         {
-          "heading": "Who Should Attend",
+          "heading": "Day 1",
           "bullets": [
-            "Backend developers transitioning to MongoDB",
-            "Data architects designing new applications",
-            "Engineers responsible for database schema design",
-            "Technical leads evaluating MongoDB for projects"
+            "MongoDB Overview",
+            "Connecting to a Database",
+            "CRUD Operations Basics",
+            "Aggregations Basics",
+            "Data Modeling Basics"
           ]
         },
         {
-          "heading": "Key Topics",
+          "heading": "Day 2",
           "bullets": [
-            "Document model fundamentals and BSON types",
-            "Schema design patterns and anti-patterns",
-            "Query optimization and index strategies",
-            "Aggregation framework for data analysis",
-            "Transactions and data consistency",
-            "Performance tuning and profiling"
-          ]
-        },
-        {
-          "heading": "Learning Outcomes",
-          "bullets": [
-            "Design schemas aligned with application requirements",
-            "Write efficient queries using MongoDB Query Language",
-            "Implement proper indexing strategies",
-            "Understand when to embed vs. reference documents",
-            "Build aggregation pipelines for complex data transformations"
+            "MongoDB Indexing Basics",
+            "MongoDB Indexing Advanced",
+            "Multi-Document Transactions"
           ]
         }
       ]
     },
     {
-      "id": "associate-atlas-administrator",
-      "title": "Associate Atlas Administrator",
-      "short_title": "Atlas Administrator",
+      "id": "data-modeling-in-mongodb",
+      "title": "Data Modeling in MongoDB",
+      "short_title": "Data Modeling in MongoDB",
+      "track_filter": "Data Modeling in MongoDB",
+      "duration": "2 days",
+      "format": "In-person / Virtual",
+      "level": "Advanced",
+      "audience": "Developers, Data Modelers",
+      "prerequisites": "MongoDB Essentials (for certification voucher)",
+      "summary": "This targeted training session focuses on the art and science of designing highly efficient schemas tailored to diverse database workloads. Participants will move beyond traditional relational normalization to master document-based data modeling, applying proven design patterns while actively identifying and avoiding performance-killing anti-patterns.",
+      "slides": [
+        {
+          "heading": "Program Overview",
+          "body": "By the end of this session, you will possess the architectural frameworks and best practices needed to design high-performance MongoDB schemas for real-world applications."
+        },
+        {
+          "heading": "Day 1",
+          "bullets": [
+            "Identifying Database Workloads",
+            "Modeling Data Relationships",
+            "Schema Design Patterns",
+            "Advance Schema Design Patterns"
+          ]
+        },
+        {
+          "heading": "Day 2",
+          "bullets": [
+            "Schema Design Anti-Patterns",
+            "Data Modeling in Sharded Clusters",
+            "Performance Optimizations",
+            "Schema Lifecycle Management"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mongodb-atlas-for-admins",
+      "title": "MongoDB Atlas for Admins",
+      "short_title": "Atlas for Admins",
       "track_filter": "Associate Atlas Administrator",
       "duration": "2 days",
       "format": "In-person / Virtual",
-      "summary": "Become proficient in managing MongoDB Atlas deployments. Learn cluster configuration, security best practices, monitoring, and operational workflows for cloud-based MongoDB.",
+      "level": "Advanced",
+      "audience": "Database Admins, DevOps",
+      "prerequisites": "MongoDB Essentials (for certification voucher)",
+      "summary": "This comprehensive training session covers the essentials of administering MongoDB deployments on MongoDB Atlas, MongoDB's fully managed cloud database service. Participants will gain hands-on experience navigating the Atlas platform, automating workflows, and ensuring database resilience and efficiency.",
       "slides": [
         {
-          "heading": "Course Overview",
-          "body": "This intensive 2-day course covers everything needed to successfully deploy and manage MongoDB Atlas clusters in production. From initial setup to advanced operational tasks, you'll gain hands-on experience with Atlas's full feature set."
+          "heading": "Program Overview",
+          "body": "By the end of this session, you will possess the practical skills required to confidently deploy, secure, and manage high-performing MongoDB Atlas environments."
         },
         {
-          "heading": "Who Should Attend",
+          "heading": "Day 1",
           "bullets": [
-            "DevOps engineers managing database infrastructure",
-            "System administrators new to MongoDB Atlas",
-            "Platform engineers responsible for data services",
-            "Cloud architects designing MongoDB deployments"
+            "MongoDB Architecture",
+            "Replication in MongoDB",
+            "MongoDB Sharding Basics",
+            "MongoDB Logging Basics",
+            "Metrics and Monitoring Basics",
+            "Upgrades and Maintenance"
           ]
         },
         {
-          "heading": "Key Topics",
+          "heading": "Day 2",
           "bullets": [
-            "Atlas cluster deployment and configuration",
-            "Security: authentication, authorization, and encryption",
-            "Backup strategies and point-in-time recovery",
-            "Performance monitoring and alerting",
-            "Scaling strategies: vertical and horizontal",
-            "Multi-region deployments and global clusters"
-          ]
-        },
-        {
-          "heading": "Learning Outcomes",
-          "bullets": [
-            "Deploy and configure Atlas clusters for various workloads",
-            "Implement comprehensive security controls",
-            "Monitor cluster health and performance metrics",
-            "Execute backup and disaster recovery procedures",
-            "Scale clusters to meet changing demands"
+            "Deploying a Cluster",
+            "Cluster Configurations",
+            "Backup & Recovery",
+            "Atlas Security - Data Plane",
+            "Atlas Security - Encryption",
+            "Atlas Security - Network"
           ]
         }
       ]
     },
     {
-      "id": "associate-database-administrator",
-      "title": "Associate Database Administrator",
-      "short_title": "Database Administrator",
+      "id": "self-managed-mongodb-for-admins",
+      "title": "Self-Managed MongoDB for Admins",
+      "short_title": "Self-Managed for Admins",
       "track_filter": "Associate Database Administrator",
       "duration": "2 days",
       "format": "In-person / Virtual",
-      "summary": "Deep dive into MongoDB administration for self-managed deployments. Cover installation, replica sets, sharding, backup/recovery, and production operations.",
+      "level": "Intermediate",
+      "audience": "Database Admins, DevOps",
+      "prerequisites": "MongoDB Essentials (for certification voucher)",
+      "summary": "This comprehensive training track focuses on the architectural components, production deployment strategies, and administrative practices required to run MongoDB at scale. Participants will dive deep into database internals, high availability configurations, horizontal scaling, and the day-to-day operational tasks necessary to ensure a stable, secure, and highly reliable database environment.",
       "slides": [
         {
-          "heading": "Course Overview",
-          "body": "This advanced 2-day training focuses on administering self-managed MongoDB deployments. You'll learn to configure replica sets, implement sharding, and manage all aspects of production MongoDB infrastructure."
+          "heading": "Program Overview",
+          "body": "By the end of this training, participants will have the expertise to confidently manage, monitor, tune, and protect production-grade MongoDB deployments."
         },
         {
-          "heading": "Who Should Attend",
+          "heading": "Day 1",
           "bullets": [
-            "Database administrators managing on-premise MongoDB",
-            "Infrastructure engineers supporting MongoDB workloads",
-            "SREs responsible for database reliability",
-            "Technical operators transitioning from other databases"
+            "MongoDB Architecture",
+            "Replication in MongoDB",
+            "MongoDB Sharding Basics",
+            "MongoDB Logging Basics",
+            "Metrics and Monitoring Basics",
+            "Upgrades and Maintenance"
           ]
         },
         {
-          "heading": "Key Topics",
+          "heading": "Day 2",
           "bullets": [
-            "MongoDB installation and configuration",
-            "Replica set architecture and maintenance",
-            "Sharding for horizontal scalability",
-            "Backup strategies: mongodump, snapshots, and continuous backup",
-            "Performance monitoring and optimization",
-            "Security hardening and auditing",
-            "Upgrading and migration procedures"
-          ]
-        },
-        {
-          "heading": "Learning Outcomes",
-          "bullets": [
-            "Deploy and manage replica sets in production",
-            "Implement and maintain sharded clusters",
-            "Execute backup and restore operations",
-            "Diagnose and resolve performance issues",
-            "Apply security best practices for self-managed deployments"
+            "mongosh Customization",
+            "Server Administration",
+            "Deploying a Replica Set",
+            "Ops Manager & Observability",
+            "Backup & Recovery",
+            "Database Security"
           ]
         }
       ]
@@ -144,40 +160,63 @@
       "track_filter": "AI Masterclass",
       "duration": "2 days",
       "format": "In-person / Virtual",
-      "summary": "Explore MongoDB's AI capabilities including vector search, semantic search, and building AI-powered applications. Learn to integrate MongoDB with modern AI/ML workflows.",
+      "level": "Advanced",
+      "audience": "Developers, Data Scientists",
+      "prerequisites": "N/A",
+      "summary": "The MongoDB Masterclass is an accelerated, high-intensity two-day training program designed to equip technical teams with practical, high-impact MongoDB skills. Moving rapidly from core data manipulation to cutting-edge AI applications, this course bridges the gap between traditional database operations and next-generation intelligent application development.",
       "slides": [
         {
-          "heading": "Course Overview",
-          "body": "This cutting-edge 2-day masterclass explores how MongoDB powers modern AI applications. Learn to implement vector search, build RAG (Retrieval-Augmented Generation) systems, and integrate MongoDB with AI/ML frameworks."
+          "heading": "Program Overview",
+          "body": "By the end of this masterclass, participants will know how to optimize data workflows, build sophisticated search experiences, and integrate MongoDB as a core component of modern AI and LLM orchestration."
         },
         {
-          "heading": "Who Should Attend",
+          "heading": "Day 1",
           "bullets": [
-            "AI/ML engineers building intelligent applications",
-            "Data scientists working with vector embeddings",
-            "Full-stack developers integrating AI features",
-            "Product managers exploring AI use cases"
+            "MongoDB Basics",
+            "FTS Architecture",
+            "Indexing & Querying",
+            "Scoring & Sorting",
+            "Compound Search",
+            "Advanced Features"
           ]
         },
         {
-          "heading": "Key Topics",
+          "heading": "Day 2",
           "bullets": [
-            "Vector search fundamentals and implementation",
-            "Storing and querying embeddings at scale",
-            "Building RAG applications with MongoDB",
-            "Semantic search and similarity matching",
-            "Integrating with OpenAI, LangChain, and other frameworks",
-            "Performance optimization for AI workloads"
+            "FTS vs Semantic Search",
+            "Vectors & Embeddings",
+            "RAG in MongoDB",
+            "AI Integrations",
+            "MongoDB MCP Server"
           ]
+        }
+      ]
+    },
+    {
+      "id": "mongodb-security-masterclass",
+      "title": "MongoDB Security Masterclass",
+      "short_title": "Security Masterclass",
+      "track_filter": "MongoDB Security Masterclass",
+      "duration": "1 day",
+      "format": "In-person / Virtual",
+      "level": "Advanced",
+      "audience": "Database Administrators",
+      "prerequisites": "N/A",
+      "summary": "This advanced masterclass delivers a focused, hands-on exploration of the security capabilities required to protect modern MongoDB deployments. Participants will learn how to implement strong authentication, enforce role-based access control, secure data in transit, at rest, and in use, and apply network security controls to reduce risk across enterprise environments.",
+      "slides": [
+        {
+          "heading": "Program Overview",
+          "body": "By the end of this session, participants will be able to design and operationalize robust security architectures for MongoDB, including modern encryption approaches such as CSFLE and Queryable Encryption, enabling them to meet enterprise security requirements with confidence."
         },
         {
-          "heading": "Learning Outcomes",
+          "heading": "Day 1",
           "bullets": [
-            "Implement vector search for semantic queries",
-            "Build RAG systems using MongoDB as knowledge base",
-            "Design schemas optimized for AI workloads",
-            "Integrate MongoDB with popular AI frameworks",
-            "Deploy production-ready AI-powered applications"
+            "Authentication & Authorization",
+            "Security in Observability",
+            "In-transit & At-rest Encryption",
+            "Client-side Field-level Encryption",
+            "Queryable Encryption",
+            "Network Security"
           ]
         }
       ]

@@ -122,6 +122,13 @@ const Portal = ({ user, onLogout }) => {
     <div className="space-y-6" data-testid="course-detail-inline">
       <div>
         <h3 className="text-2xl font-heading font-medium text-slate-50 mb-2">{course.title}</h3>
+        {(course.level || course.audience || course.prerequisites) && (
+          <div className="mb-3 space-y-1 text-sm text-slate-400">
+            {course.level && <p><span className="text-slate-300">Level:</span> {course.level}</p>}
+            {course.audience && <p><span className="text-slate-300">Audience:</span> {course.audience}</p>}
+            {course.prerequisites && <p><span className="text-slate-300">Prerequisites:</span> {course.prerequisites}</p>}
+          </div>
+        )}
         <p className="text-slate-300 leading-relaxed">{course.summary}</p>
         <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
           <span className="flex items-center gap-1">
