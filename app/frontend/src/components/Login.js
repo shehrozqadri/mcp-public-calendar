@@ -64,7 +64,7 @@ const Login = ({ onLogin }) => {
             MCP
           </p>
           <p className="text-center text-slate-400 mb-8">
-            Sign up to view training courses and live seat availability
+            Enter your details to view training courses and live seat availability
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -151,7 +151,7 @@ const Login = ({ onLogin }) => {
               data-testid="login-submit-button"
               className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-medium px-6 py-3 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing up...' : 'Sign up'}
+              {loading ? 'Loading...' : 'View courses'}
             </button>
           </form>
 

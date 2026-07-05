@@ -242,12 +242,6 @@ const Portal = ({ user, onLogout }) => {
     };
   };
 
-  const getSeatDotClass = () => {
-    if (sseStatus === 'connected') return 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]';
-    if (sseStatus === 'reconnecting') return 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]';
-    return 'w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]';
-  };
-
   const renderBatchBar = (batch) => {
     const visibility = getBatchVisibility(batch);
 
@@ -369,12 +363,6 @@ const Portal = ({ user, onLogout }) => {
             <div>
               <h1 className="text-xl font-heading font-semibold text-slate-50 leading-tight">MongoDB Certification Program</h1>
               <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-400">MCP Portal</p>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-              <div className={getSeatDotClass()} data-testid="sse-status-indicator"></div>
-              <span className="text-xs text-emerald-400 font-mono uppercase tracking-wider">
-                {sseStatus === 'connected' ? 'Live' : sseStatus === 'reconnecting' ? 'Reconnecting' : 'Offline'}
-              </span>
             </div>
           </div>
           
