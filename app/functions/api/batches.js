@@ -12,7 +12,8 @@ function toIso(value) {
 
 function normalizeBatch(b) {
   const maxCapacity = b.maxCapacity ?? b.max_capacity ?? 0;
-  const enrolled = b.enrolledCount ?? b.enrolled_count ?? 0;
+  const nominatedCount = b.nominatedCount ?? b.nominated_count ?? 0;
+  const seatsLeft = Math.max(0, maxCapacity - nominatedCount);
   return {
     batch_id: String(b._id),
     batch_no: b.batchNo ?? b.batch_no ?? 0,
@@ -24,8 +25,9 @@ function normalizeBatch(b) {
     instructor: b.instructor ?? "",
     batch_type: b.batchType ?? b.batch_type ?? "",
     max_capacity: maxCapacity,
-    enrolled_count: enrolled,
-    available_seats: Math.max(0, maxCapacity - enrolled),
+    nominated_count: nominatedCount,
+    available_seats: seatsLeft,
+    seats_left: seatsLeft,
     status: b.status ?? "",
     nominations_closed: b.nominationsClosed ?? b.nominations_closed ?? false,
     visibility: String(b.visibility ?? b.batchVisibility ?? b.batch_visibility ?? "PUBLIC").toUpperCase(),

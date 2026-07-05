@@ -105,8 +105,9 @@ class BatchResponse(BaseModel):
     instructor: str
     batch_type: str
     max_capacity: int
-    enrolled_count: int
+    nominated_count: int
     available_seats: int
+    seats_left: int
     status: str
     nominations_closed: bool
 
@@ -226,7 +227,9 @@ async def get_batches(
 
     batches = []
     async for batch in db.batches.find(query):
-        available_seats = max(0, batch.get("maxCapacity", batch.get("max_capacity", 0)) - batch.get("enrolledCount", batch.get("enrolled_count", 0)))
+        max_capacity = batch.get("maxCapacity", batch.get("max_capacity", 0))
+        nominated_count = batch.get("nominatedCount", batch.get("nominated_count", 0))
+        seats_left = max(0, max_capacity - nominated_count)
         batches.append({
             "batch_id": str(batch["_id"]),
             "batch_no": batch.get("batchNo", batch.get("batch_no", 0)),
@@ -237,9 +240,10 @@ async def get_batches(
             "location": batch.get("location", ""),
             "instructor": batch.get("instructor", ""),
             "batch_type": batch.get("batchType", batch.get("batch_type", "")),
-            "max_capacity": batch.get("maxCapacity", batch.get("max_capacity", 0)),
-            "enrolled_count": batch.get("enrolledCount", batch.get("enrolled_count", 0)),
-            "available_seats": available_seats,
+            "max_capacity": max_capacity,
+            "nominated_count": nominated_count,
+            "available_seats": seats_left,
+            "seats_left": seats_left,
             "status": batch.get("status", ""),
             "nominations_closed": batch.get("nominationsClosed", batch.get("nominations_closed", False))
         })

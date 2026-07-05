@@ -11,6 +11,19 @@ const getBatchVisibility = (batch) =>
 const getVisibleBatches = (batchList) =>
   batchList.filter((batch) => getBatchVisibility(batch) === 'PUBLIC');
 
+const getSeatsLeft = (batch) => {
+  if (batch.seats_left != null) return batch.seats_left;
+  if (batch.available_seats != null) return batch.available_seats;
+  const maxCapacity = batch.max_capacity ?? 0;
+  const nominatedCount = batch.nominated_count ?? 0;
+  return Math.max(0, maxCapacity - nominatedCount);
+};
+
+const formatSeatsLeft = (batch) => {
+  const seatsLeft = getSeatsLeft(batch);
+  return `${seatsLeft} seat${seatsLeft === 1 ? '' : 's'} left`;
+};
+
 const getWeekSegments = (weekDays, batchList) => {
   const weekStart = startOfDay(weekDays[0]);
   const weekEnd = startOfDay(weekDays[6]);
@@ -244,11 +257,12 @@ const Portal = ({ user, onLogout }) => {
 
   const renderBatchBar = (batch) => {
     const visibility = getBatchVisibility(batch);
+    const seatsLeftLabel = formatSeatsLeft(batch);
 
     return (
       <div
         className="flex h-7 w-full min-w-0 items-stretch overflow-hidden rounded-md border border-emerald-600/40 bg-emerald-500 text-[11px] shadow-sm"
-        title={`${batch.training_name} · ${batch.location}`}
+        title={`${batch.training_name || batch.track} · ${batch.location} · ${seatsLeftLabel}`}
         data-testid={`batch-event-${batch.batch_no}`}
       >
         <span className="flex shrink-0 items-center bg-emerald-600 px-2 font-semibold text-white">
@@ -259,6 +273,12 @@ const Portal = ({ user, onLogout }) => {
         </span>
         <span className="flex min-w-0 flex-1 items-center truncate bg-white px-2 font-medium text-slate-800">
           {batch.training_name || batch.track}
+        </span>
+        <span
+          className="flex shrink-0 items-center bg-emerald-50 px-2 text-[10px] font-semibold text-emerald-800"
+          data-testid={`batch-seats-left-${batch.batch_no}`}
+        >
+          {seatsLeftLabel}
         </span>
       </div>
     );
