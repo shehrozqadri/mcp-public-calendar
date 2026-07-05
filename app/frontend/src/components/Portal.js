@@ -110,6 +110,24 @@ const Portal = ({ user, onLogout }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
+  useEffect(() => {
+    if (!selectedCourse) return undefined;
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setSelectedCourse(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [selectedCourse]);
+
   const loadCourses = async () => {
     try {
       setCoursesError('');
@@ -131,8 +149,8 @@ const Portal = ({ user, onLogout }) => {
     }
   };
 
-  const renderCourseDetail = (course) => (
-    <div className="space-y-6" data-testid="course-detail-inline">
+  const renderCourseDetail = (course, { onClose } = {}) => (
+    <div className="space-y-6" data-testid="course-detail-modal">
       <div>
         <h3 className="text-2xl font-heading font-medium text-slate-50 mb-2">{course.title}</h3>
         {(course.level || course.audience || course.prerequisites) && (
@@ -172,6 +190,7 @@ const Portal = ({ user, onLogout }) => {
       <button
         onClick={() => {
           setFilters({ ...filters, track: course.track_filter });
+          onClose?.();
         }}
         className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-medium px-6 py-3 rounded-md transition-colors"
         data-testid="show-batches-from-detail"
@@ -435,7 +454,6 @@ const Portal = ({ user, onLogout }) => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedCourse(course);
                       setFilters({ ...filters, track: course.track_filter });
                     }}
                     className="mt-2 text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
@@ -450,23 +468,6 @@ const Portal = ({ user, onLogout }) => {
                 <p className="text-sm text-slate-500">No courses available.</p>
               )}
             </div>
-
-            {selectedCourse && (
-              <div className="mt-6 pt-6 border-t border-slate-800">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-heading font-medium text-emerald-400">Course Details</h3>
-                  <button
-                    onClick={() => setSelectedCourse(null)}
-                    className="p-2 hover:bg-slate-800 rounded-md transition-colors"
-                    data-testid="close-course-detail"
-                    aria-label="Close course details"
-                  >
-                    <X className="w-4 h-4 text-slate-400" />
-                  </button>
-                </div>
-                {renderCourseDetail(selectedCourse)}
-              </div>
-            )}
           </div>
         </div>
 
@@ -584,6 +585,54 @@ const Portal = ({ user, onLogout }) => {
           )}
         </div>
       </div>
+
+      {selectedCourse && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="course-detail-title"
+          data-testid="course-detail-overlay"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/70"
+            onClick={() => setSelectedCourse(null)}
+            aria-label="Close course details"
+            data-testid="course-detail-backdrop"
+          />
+          <div className="relative flex w-full max-w-2xl max-h-[85vh] flex-col overflow-hidden rounded-lg border border-slate-800 bg-slate-900 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
+              <h3 id="course-detail-title" className="text-lg font-heading font-medium text-emerald-400">
+                Course Details
+              </h3>
+              <button
+                onClick={() => setSelectedCourse(null)}
+                className="rounded-md p-2 transition-colors hover:bg-slate-800"
+                data-testid="close-course-detail"
+                aria-label="Close course details"
+              >
+                <X className="h-4 w-4 text-slate-400" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto px-6 py-5 scrollbar-hide">
+              {renderCourseDetail(selectedCourse, { onClose: () => setSelectedCourse(null) })}
+            </div>
+
+            <div className="border-t border-slate-800 px-6 py-4">
+              <button
+                type="button"
+                onClick={() => setSelectedCourse(null)}
+                className="w-full rounded-md border border-slate-700 bg-slate-800 px-6 py-3 font-medium text-slate-200 transition-colors hover:bg-slate-700"
+                data-testid="cancel-course-detail"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
