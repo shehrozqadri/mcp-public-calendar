@@ -18,6 +18,7 @@ const Portal = ({ user, onLogout }) => {
   const [locations, setLocations] = useState(['Pune', 'Others']);
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [coursesError, setCoursesError] = useState('');
 
   useEffect(() => {
     loadCourses();
@@ -33,9 +34,13 @@ const Portal = ({ user, onLogout }) => {
 
   const loadCourses = async () => {
     try {
+      setCoursesError('');
       const response = await fetch(`${API_URL}/api/courses`, {
         credentials: 'include'
       });
+      if (!response.ok) {
+        throw new Error('Failed to load courses');
+      }
       const data = await response.json();
       setCourses(data.courses || []);
       
@@ -44,8 +49,52 @@ const Portal = ({ user, onLogout }) => {
       setTracks(prev => [...new Set([...prev, ...uniqueTracks])]);
     } catch (error) {
       console.error('Failed to load courses:', error);
+      setCoursesError('Unable to load training courses. Please refresh the page.');
     }
   };
+
+  const renderCourseDetail = (course) => (
+    <div className="space-y-6" data-testid="course-detail-inline">
+      <div>
+        <h3 className="text-2xl font-heading font-medium text-slate-50 mb-2">{course.title}</h3>
+        <p className="text-slate-300 leading-relaxed">{course.summary}</p>
+        <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
+          <span className="flex items-center gap-1">
+            <CalendarIcon className="w-4 h-4" />
+            {course.duration}
+          </span>
+          <span>{course.format}</span>
+        </div>
+      </div>
+
+      {course.slides?.map((slide, idx) => (
+        <div key={idx} className="space-y-3">
+          <h4 className="text-lg font-heading font-medium text-slate-50">{slide.heading}</h4>
+          {slide.body && <p className="text-slate-300 leading-relaxed text-sm">{slide.body}</p>}
+          {slide.bullets && (
+            <ul className="space-y-2">
+              {slide.bullets.map((bullet, bidx) => (
+                <li key={bidx} className="flex items-start gap-3 text-slate-300 text-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+
+      <button
+        onClick={() => {
+          setFilters({ ...filters, track: course.track_filter });
+        }}
+        className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-medium px-6 py-3 rounded-md transition-colors"
+        data-testid="show-batches-from-detail"
+      >
+        Show batches for this course
+      </button>
+    </div>
+  );
 
   const loadBatches = async () => {
     setLoading(true);
@@ -241,12 +290,23 @@ const Portal = ({ user, onLogout }) => {
         <div className="col-span-1 lg:col-span-4 border-r border-slate-800 bg-slate-950 overflow-y-auto scrollbar-hide" data-testid="course-catalog-panel">
           <div className="p-6">
             <h2 className="text-xl font-heading font-medium text-slate-50 mb-4">Training Courses</h2>
+
+            {coursesError && (
+              <div className="mb-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-md text-sm">
+                {coursesError}
+              </div>
+            )}
+
             <div className="space-y-3">
               {courses.map((course, idx) => (
                 <div
                   key={course.id}
                   onClick={() => setSelectedCourse(course)}
-                  className="bg-slate-900 border border-slate-800 p-4 rounded-lg hover:border-emerald-500/50 hover:bg-slate-800/50 cursor-pointer transition-all"
+                  className={`bg-slate-900 border p-4 rounded-lg hover:border-emerald-500/50 hover:bg-slate-800/50 cursor-pointer transition-all ${
+                    selectedCourse?.id === course.id
+                      ? 'border-emerald-500 bg-slate-800/70'
+                      : 'border-slate-800'
+                  }`}
                   data-testid={`course-catalog-item-${idx}`}
                 >
                   <h3 className="font-heading font-medium text-slate-50 mb-1">{course.short_title}</h3>
@@ -254,6 +314,7 @@ const Portal = ({ user, onLogout }) => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      setSelectedCourse(course);
                       setFilters({ ...filters, track: course.track_filter });
                     }}
                     className="mt-2 text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
@@ -263,7 +324,28 @@ const Portal = ({ user, onLogout }) => {
                   </button>
                 </div>
               ))}
+
+              {courses.length === 0 && !coursesError && (
+                <p className="text-sm text-slate-500">No courses available.</p>
+              )}
             </div>
+
+            {selectedCourse && (
+              <div className="mt-6 pt-6 border-t border-slate-800">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-heading font-medium text-emerald-400">Course Details</h3>
+                  <button
+                    onClick={() => setSelectedCourse(null)}
+                    className="p-2 hover:bg-slate-800 rounded-md transition-colors"
+                    data-testid="close-course-detail"
+                    aria-label="Close course details"
+                  >
+                    <X className="w-4 h-4 text-slate-400" />
+                  </button>
+                </div>
+                {renderCourseDetail(selectedCourse)}
+              </div>
+            )}
           </div>
         </div>
 
@@ -371,69 +453,6 @@ const Portal = ({ user, onLogout }) => {
           )}
         </div>
       </div>
-
-      {/* Course Detail Slide-over */}
-      {selectedCourse && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-end" onClick={() => setSelectedCourse(null)}>
-          <div
-            className="w-full md:w-[480px] h-full bg-slate-900 border-l border-slate-800 shadow-2xl overflow-y-auto transform transition-transform duration-300"
-            onClick={(e) => e.stopPropagation()}
-            data-testid="course-detail-panel"
-          >
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-6 flex items-center justify-between">
-              <h2 className="text-2xl font-heading font-medium text-slate-50">{selectedCourse.title}</h2>
-              <button
-                onClick={() => setSelectedCourse(null)}
-                className="p-2 hover:bg-slate-800 rounded-md transition-colors"
-                data-testid="close-course-detail"
-              >
-                <X className="w-5 h-5 text-slate-400" />
-              </button>
-            </div>
-            
-            <div className="p-6 space-y-6">
-              <div>
-                <p className="text-slate-300 leading-relaxed">{selectedCourse.summary}</p>
-                <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
-                  <span className="flex items-center gap-1">
-                    <CalendarIcon className="w-4 h-4" />
-                    {selectedCourse.duration}
-                  </span>
-                  <span>{selectedCourse.format}</span>
-                </div>
-              </div>
-
-              {selectedCourse.slides?.map((slide, idx) => (
-                <div key={idx} className="space-y-3">
-                  <h3 className="text-xl font-heading font-medium text-slate-50">{slide.heading}</h3>
-                  {slide.body && <p className="text-slate-300 leading-relaxed">{slide.body}</p>}
-                  {slide.bullets && (
-                    <ul className="space-y-2">
-                      {slide.bullets.map((bullet, bidx) => (
-                        <li key={bidx} className="flex items-start gap-3 text-slate-300">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></span>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-
-              <button
-                onClick={() => {
-                  setFilters({ ...filters, track: selectedCourse.track_filter });
-                  setSelectedCourse(null);
-                }}
-                className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-medium px-6 py-3 rounded-md transition-colors"
-                data-testid="show-batches-from-detail"
-              >
-                Show batches for this course
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

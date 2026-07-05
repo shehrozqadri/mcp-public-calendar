@@ -86,6 +86,13 @@ export async function onRequestPost({ request, env }) {
     } else if (errMsg.includes("Authentication failed") || errMsg.includes("bad auth")) {
       hint =
         "MongoDB credentials rejected. Update MONGO_URL in Vercel with a valid Atlas connection string (URL-encode special characters in the password).";
+    } else if (
+      errMsg.includes("not authorized") ||
+      e?.code === 13 ||
+      e?.codeName === "Unauthorized"
+    ) {
+      hint =
+        "MongoDB user lacks write permission. Grant readWrite on mcp-forge.user_profiles to the database user in Atlas.";
     }
 
     return error(hint, 503);

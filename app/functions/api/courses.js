@@ -1,8 +1,16 @@
 // GET /api/courses - returns the static course catalog
-// Content is bundled with the function to avoid an extra request.
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { json, error } from "../utils/response.js";
 import { getUserFromRequest } from "../../server/session.js";
-import courses from "./_courses.json";
+
+const courses = JSON.parse(
+  readFileSync(
+    join(dirname(fileURLToPath(import.meta.url)), "_courses.json"),
+    "utf8"
+  )
+);
 
 export async function onRequestGet({ request, env }) {
   try {
