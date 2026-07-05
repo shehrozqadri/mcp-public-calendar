@@ -28,6 +28,7 @@ function normalizeBatch(b) {
     available_seats: Math.max(0, maxCapacity - enrolled),
     status: b.status ?? "",
     nominations_closed: b.nominationsClosed ?? b.nominations_closed ?? false,
+    visibility: String(b.visibility ?? b.batchVisibility ?? b.batch_visibility ?? "PUBLIC").toUpperCase(),
   };
 }
 
