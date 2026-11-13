@@ -62,6 +62,8 @@ function buildRequest(req) {
 function getRuntimeEnv() {
   return resolveEnv({
     MONGO_URL: process.env.MONGO_URL,
+    MONGODB_URI: process.env.MONGODB_URI,
+    mongodb_uri: process.env.mongodb_uri,
     DB_NAME: process.env.DB_NAME,
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
     NODE_ENV: process.env.NODE_ENV,

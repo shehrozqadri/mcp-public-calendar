@@ -16,8 +16,13 @@ export function resolveEnv(source = {}) {
 
   const raw = { ...fromProcess, ...source };
 
+  const mongoUrl =
+    pick(raw, "MONGO_URL") ||
+    pick(raw, "MONGODB_URI") ||
+    pick(raw, "mongodb_uri");
+
   return {
-    MONGO_URL: pick(raw, "MONGO_URL"),
+    MONGO_URL: mongoUrl,
     DB_NAME: pick(raw, "DB_NAME") || "mcp-forge",
     ALLOWED_ORIGIN: pick(raw, "ALLOWED_ORIGIN"),
     NODE_ENV: pick(raw, "NODE_ENV") || pick(raw, "ENVIRONMENT") || "production",

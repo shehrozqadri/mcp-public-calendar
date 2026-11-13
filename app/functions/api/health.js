@@ -6,7 +6,7 @@ import { getMongoUrlDiagnostics } from "../../server/mongoUrl.js";
 
 export async function onRequestGet({ env }) {
   const config = getConfigStatus(env);
-  const mongo = getMongoUrlDiagnostics(env?.MONGO_URL || process.env.MONGO_URL);
+  const mongo = getMongoUrlDiagnostics(process.env.MONGO_URL || process.env.MONGODB_URI || process.env.mongodb_uri || env?.MONGO_URL || env?.MONGODB_URI || env?.mongodb_uri);
 
   let database = "unreachable";
   if (config.ok) {
