@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": "create-react-app",
-  "installCommand": "cd app && corepack yarn install && cd frontend && corepack yarn install --frozen-lockfile",
-  "buildCommand": "cd app/frontend && CI=false DISABLE_ESLINT_PLUGIN=true corepack yarn build",
+  "installCommand": "cd app && npm install --legacy-peer-deps --no-audit --no-fund && cd frontend && npm install --legacy-peer-deps --no-audit --no-fund",
+  "buildCommand": "cd app/frontend && CI=false DISABLE_ESLINT_PLUGIN=true npm run build",
   "outputDirectory": "app/frontend/build",
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }
